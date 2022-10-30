@@ -1,21 +1,78 @@
-import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
     public static void main(String[] params) {
-      // System.out.println(FuncUtils.logic("true true false false","AND"));
-        Tree root = new Tree(new Model("Буханка",2790,11),
-                        new Tree(new Model("Головастик",3070,2),
-                                new Tree(new Model("Бортовой",2670,2), null,
-                                        new Tree(new Model("Буханка",2800,11))),null),
-                        new Tree(new Model("Патриот",2670,5),
-                                new Tree(new Model("Хантер",2520,5), new Tree(new Model("TEST",200,2)), null),
-                                new Tree(new Model("Буханка",2800,11), new Tree(new Model("Буханка",4800,11)),
-                                        new Tree(new Model("Буханка",2800,11)))));
-        wide(root);
+        Scanner in = new Scanner(System.in);
+        System.out.print("Input : ");
+        String enteredValue = in.nextLine();
+        //String enteredValue = "Saab";
 
+        ArrayList<Model> models = new ArrayList<>();
+        models.add(new Model("Saab",1200,4));
+        models.add(new Model("Volvo XC90",1500,7));
+        models.add(new Model("Lada Largus",1200,2));
+        models.add(new Model("Jeep",2100,4));
 
+        List<Model> temp = models.stream().filter(model -> model.getName().equals(enteredValue)).toList();
+        Model enterValue = new Model((temp.isEmpty())?new Model(enteredValue):temp.get(0));
+
+        ArrayList<Data> items = new ArrayList<>();
+
+        items.add(new Data(1, "I",  enteredValue + " ТС котегории В:" , 0));
+        items.add(new Data(12, "I",  enteredValue + " фургон: " , 0));
+        items.add(new Data(17, "I",  enteredValue + " внедарожник: " , 0));
+        items.add(new Data(100, "I",  enteredValue + " семейный(7-8м.): " , 0));
+
+        items.add(new Data(101, "L","AND" , 100));
+        items.add(new Data(102, "P",">", 101));
+        items.add(new Data(103, "V",String.valueOf(enterValue.getCount()), 102));
+        items.add(new Data(104,"C", "6", 102));
+        items.add(new Data(105, "P","<", 101));
+        items.add(new Data(106, "V",String.valueOf(enterValue.getCount()), 105));
+        items.add(new Data(107,"C", "9", 105));
+
+        items.add(new Data(50, "L","AND" , 12));
+        items.add(new Data(54, "P","<", 50));
+        items.add(new Data(55, "V",String.valueOf(enterValue.getCount()), 54));
+        items.add(new Data(56,"C", "3", 54));
+
+        items.add(new Data(18, "L","AND" , 17));
+        items.add(new Data(19, "P",">", 18));
+        items.add(new Data(20, "V",String.valueOf(enterValue.getWeight()), 19));
+        items.add(new Data(21,"C", "2000", 19));
+
+        items.add(new Data(2, "L","AND", 1));
+        items.add(new Data(3, "P","equals", 2));
+        items.add(new Data(6,"V",  enteredValue, 3));
+        items.add(new Data(7,"C", models.toString(), 3));
+        items.add(new Data(4, "P","<", 2));
+        items.add(new Data(8, "V",String.valueOf( enterValue.getWeight()), 4));
+        items.add(new Data(9,"C", "3500", 4));
+        items.add(new Data(5, "P","<", 2));
+        items.add(new Data(10, "V",String.valueOf( enterValue.getCount()), 5));
+        items.add(new Data(11,"C", "9", 5));
+        DataNode tree = DataNode.makeTree(items, new TreeNode.TypeAdapter<Data, DataNode>() {
+            @Override
+            public DataNode newInstance() {
+                return new DataNode();
+            }
+
+            @Override
+            public boolean isChildOf(Data parentNodeData, Data childNodeData) {
+                return parentNodeData.id == childNodeData.parentId;
+            }
+            @Override
+            public boolean isTopLevelItem(Data data) {
+                return data.parentId == 0;
+            }
+
+        });
+
+        Stack<String> output = tree.Solution(tree.postOrder());
+        output.add(enterValue.toString());
+        System.out.println(output);
     }
     static class DataNode extends TreeNode<Data, DataNode>  {
         @Override
@@ -55,85 +112,6 @@ public class Main {
         @Override
         public String toString() {
             return type + " " + value;
-        }
-    }
-    public static void wide(Tree root) {
-        Stack<Tree> stack = new Stack<>();
-        stack.push(root);
-        List<String> auto = Arrays.asList("Буханка","Головастик","Бортовой","Патриот","Хантер");
-
-        while (!stack.isEmpty()) {
-            Tree node = stack.pop();
-            ArrayList<Data> items = new ArrayList<>();
-            items.add(new Data(1, "I",  node.model.getName() + " ТС котегории В:" , 0));
-            items.add(new Data(12, "I",  node.model.getName() + " грузовик: " , 0));
-            items.add(new Data(17, "I",  node.model.getName() + " автобус: " , 0));
-
-            items.add(new Data(18, "L","AND" , 17));
-            items.add(new Data(19, "P",">", 18));
-            items.add(new Data(20, "V",String.valueOf(node.model.getCount()), 19));
-            items.add(new Data(21,"C", "12", 19));
-
-            items.add(new Data(13, "L","AND" , 12));
-            items.add(new Data(14, "P","<", 13));
-            items.add(new Data(15, "V",String.valueOf( node.model.getWeight()), 14));
-            items.add(new Data(16,"C", "3500", 14));
-            items.add(new Data(14, "P","<", 13));
-            items.add(new Data(15, "V",String.valueOf(node.model.getCount()), 14));
-            items.add(new Data(16,"C", "3", 14));
-
-            items.add(new Data(8, "V",String.valueOf( node.model.getWeight()), 4));
-            items.add(new Data(2, "L","AND", 1));
-            items.add(new Data(3, "P","equals", 2));
-            items.add(new Data(6,"V",  node.model.getName(), 3));
-            items.add(new Data(7,"C", auto.toString(), 3));
-            items.add(new Data(4, "P","<", 2));
-            items.add(new Data(8, "V",String.valueOf( node.model.getWeight()), 4));
-            items.add(new Data(9,"C", "3500", 4));
-            items.add(new Data(5, "P","<", 2));
-            items.add(new Data(10, "V",String.valueOf( node.model.getCount()), 5));
-            items.add(new Data(11,"C", "9", 5));
-
-            DataNode tree = DataNode.makeTree(items, new TreeNode.TypeAdapter<Data, DataNode>() {
-                @Override
-                public DataNode newInstance() {
-                    return new DataNode();
-                }
-
-                @Override
-                public boolean isChildOf(Data parentNodeData, Data childNodeData) {
-                    return parentNodeData.id == childNodeData.parentId;
-                }
-                @Override
-                public boolean isTopLevelItem(Data data) {
-                    return data.parentId == 0;
-                }
-
-            });
-            System.out.println(tree.Solution(tree.postOrder()));
-
-            if (node.right != null) {
-                stack.push(node.right);
-            }
-
-            if (node.left != null) {
-                stack.push(node.left);
-            }
-        }
-    }
-    static class Tree {
-        Model model;
-        Tree left;
-        Tree right;
-
-        public Tree(Model model, Tree left, Tree right) {
-            this.model = model;
-            this.left = left;
-            this.right = right;
-        }
-
-        public Tree(Model model) {
-            this.model = model;
         }
     }
 }

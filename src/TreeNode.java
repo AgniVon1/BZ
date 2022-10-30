@@ -61,18 +61,17 @@ public class TreeNode<T extends Main.Data, N extends TreeNode<T, N>> {
         Stack<Main.Data> ObjCner = new Stack<>();
         Stack<String> out = new Stack<>();
 
-        int i = 0; //костыль для "I"
         while (!output.isEmpty() && output.peek().data != null) {
             Main.Data _data = new Main.Data(output.pop().data);
             switch (_data.getType()) {
                 case "C", "V" -> {
                     ObjCner.push(_data);
-                    //System.out.println(ObjCner.peek().getType() + " , " + ObjCner.peek().getValue());
+                    // System.out.println(ObjCner.peek().getType() + " , " + ObjCner.peek().getValue());
                 }
                 case "P" -> {
                     _data.setValue(FuncUtils.predicate(ObjCner.pop().getValue(), ObjCner.pop().getValue(), _data.getValue()));
                     ObjCner.push(_data);
-                    //System.out.println(ObjCner.peek().getType() + " , " + ObjCner.peek().getValue());
+                     ///System.out.println(ObjCner.peek().getType() + " , " + ObjCner.peek().getValue());
                 }
                 case "L" -> {
                     StringBuilder buff = new StringBuilder();
@@ -85,14 +84,8 @@ public class TreeNode<T extends Main.Data, N extends TreeNode<T, N>> {
                     //System.out.println(ObjCner.peek().getType() + " , " + ObjCner.peek().getValue());
                 }
                 case "I" -> {
-                    Main.Data temp = ObjCner.pop();
-                    //System.out.println(temp.getValue() + temp.getType());
-                    //System.out.println(this.children.get(i).data.getValue() + temp.getValue());
-                    //this.children.get(0).data.setValue(this.children.get(0).data.getValue() + " " + temp.getValue());
-                    //System.out.println(_data.getType());
-                    out.add(_data.getValue() + temp.getValue());
-                    //i+=1;
-
+                    //System.out.println(_data.getType() + " , "+ _data.getValue() + ObjCner.peek().getValue());
+                    out.add(_data.getValue() + ObjCner.pop().getValue());
                 }
             }
         }

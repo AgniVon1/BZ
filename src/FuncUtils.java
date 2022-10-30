@@ -17,7 +17,10 @@ public class FuncUtils {
             case "<" -> result = String.valueOf(Integer.parseInt(value) < Integer.parseInt(_const));
             case ">" -> result = String.valueOf(Integer.parseInt(value) > Integer.parseInt(_const));
             case "==" -> result = String.valueOf(value.equals(_const));
-            case "equals" -> result = String.valueOf(_const.contains(value));
+            //[Model{name='Saab', weight=2900, count=2}, Model{name='Test', weight=2900, count=2}]
+            case "equals" -> {
+                result = String.valueOf(_const.contains(value));
+            }
         }
         return result;
     }

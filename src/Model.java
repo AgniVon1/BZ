@@ -1,3 +1,4 @@
+import java.util.Collection;
 
 public class Model {
     private String name;
@@ -9,6 +10,18 @@ public class Model {
         this.weight = weight;
         this.count = count;
     }
+    public Model(Model model) {
+        this.name =  model.getName();
+        this.weight = model.getWeight();
+        this.count = model.getCount();
+    }
+
+    public Model(String name) {
+        this.name = "<undf>";
+        this.weight = 0;
+        this.count = 0;
+    }
+
     public String getName() {
         return name;
     }
@@ -23,4 +36,13 @@ public class Model {
         return count;
     }
 
+
+    @Override
+    public String toString() {
+        return "Model{" +
+                "name='" + name + '\'' +
+                ", weight=" + weight +
+                ", count=" + count +
+                '}';
+    }
 }
